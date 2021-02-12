@@ -1,0 +1,52 @@
+* {
+    margin: 0px;
+}
+
+html {
+    font-family: Arial, sans-serif;
+    color: #cecac3; 
+}
+
+#container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#videopanel {
+    background: #2c2c2c;
+    width: 70vw;
+    height: 70vh;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+#preview {
+    /* object-fit: contain;  */
+    width: 69vw;
+    height: 69vh;
+}
+
+#timelinepanel {
+    background: #2e2e2e;
+    width: 70vw;
+    height: 30vh;
+    outline: 1px solid black;
+    align-content: center;
+}
+
+#settingspanel {
+    background: #222222;
+    width: 30vw;
+    height: 70vh;
+    outline: 1px solid black;
+}
+
+#exportpanel {
+    background: #1f1f1f;
+    width: 30vw;
+    height: 30vh;
+    outline: 1px solid black;
+}

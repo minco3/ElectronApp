@@ -2,18 +2,26 @@
 
 <html>
 <head>
+    <link rel='stylesheet' href='main.css'>
     <meta charset="UTF-8">
     <title>Hello World!</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <script src='ffmpeg.js'></script>
+    <script src='inputvideo.js'></script>
 </head>
-<body style="background: #181a1b; color: #cecac3; font-family: Arial, sans-serif;">
-    <h1>Hello World!</h1>
-    <button onclick="runFFmpeg()">RUN FFMPEG</button>
-    <p>
-        We are using node <script>document.write(process.versions.node)</script>,
-        Chrome <script>document.write(process.versions.chrome)</script>,
-        and Electron <script>document.write(process.versions.electron)</script>.
-    </p>
+<body>
+
+    <div id='container'>
+        <div id='videopanel'>
+            <video id='preview'controls></video>
+        </div>
+        <div id='settingspanel'>                
+            <input value='select a file' type="file" id="inputVideo">
+            <button onclick="runUpload()">UPLOAD</button>
+            <button onclick="runFFmpeg()">RUN FFMPEG</button>
+        </div>
+        <div id='timelinepanel'></div>
+            <div id='timeline'></div>
+        <div id='exportpanel'></div>
+    </div>
 </body>
 </html>

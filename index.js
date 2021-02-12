@@ -3,8 +3,7 @@ var ffmpeg = require('ffmpeg');
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    backgroundColor: '#181a1b',
     webPreferences: {
       nodeIntegration: true
     }
@@ -13,13 +12,7 @@ function createWindow () {
   win.loadFile('index.html')
 }
 
-app.whenReady().then(createWindow)
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+app.whenReady().then(createWindow);
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
