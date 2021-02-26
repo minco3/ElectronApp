@@ -1,1 +1,31 @@
-- video is covering bottom border
+electron
+    - menu
+        - fileopen
+        - save
+        - settings menu
+
+timelinepanel
+    - playhead & handle
+    - keybinds for play pause
+    - controls
+        - play pause buttons
+        - volume slider
+    - in/out clipping
+
+settingspanel
+    - target bitrate
+    - resolution scaling
+    - (file format)
+    - show metadata
+    - fuck my shit up mode
+
+exportpanel
+    - save location shows next to button
+    - randomized name
+
+late game
+    - video to gif
+    - error catcher for user
+    - window scaling on open
+    - packaging install
+    - preferences & saved data per user

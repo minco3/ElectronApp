@@ -4,27 +4,55 @@
 <head>
     <link rel='stylesheet' href='main.css'>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <script src='ffmpeg.js'></script>
+    <title>hello world</title>
     <script src='inputvideo.js'></script>
 </head>
 <body>
 
     <div id='container'>
         <div id='videopanel'>
-            <video id='preview' controls></video>
+            <video id='preview'></video>
         </div>
         <div id='settingspanel'>                
-            <input value='select a file' type="file" id="inputvideo">
-            <button onclick="runUpload()">UPLOAD</button>
-            <button onclick="runFFmpeg()">RUN FFMPEG</button>
+            <button onclick="openDialog()">Open File</button>
+            <p id='openFilePathLabel'></p>
+            <br>
+            <button onclick="clearMedia()">Clear Media</button>
+            <br><br>
+            <input type='number' id='resolutionX' class='resolutionInput'>
+            <input type='number' id='resolutionY' class='resolutionInput'>
+            <br>
+            <input type='checkbox' checked='true' id='lockResolution'> Lock aspect ratio</label>
+            <br><br>
+            <p id='currentFileSizeLabel'></p>
+            <label>Target file size:</label>
+            <select name="sizeTarget" class="dropDown">
+                <option value="native">Same as source</option>
+                <option value="8">8 MB</option>
+                <option value="50">50 MB</option>
+                <option value="100">100 MB</option>
+            </select>
+            <br>
+            <label>Audio preset</label>
+            <select id="audioPreset" class="dropDown">
+                <option value="native">Same as source</option>
+                <option value="32">Lossy</option>
+                <option value="64">Average</option>
+                <option value="128">Good</option>
+            </select>
+            <br>
+            <button onclick="setAudioPresets()">Set audio presets</button>
+            
+
         </div>
         <div id='timelinepanel'>
             <div id='timeline'>
         </div>
         </div>
         <div id='exportpanel'>
-
+            <button onclick="saveDialog()">Save As</button>
+            <br>
+            <button onclick="runFFmpeg()">Export</button>
         </div>
     </div>
 </body>

@@ -67,12 +67,6 @@ html {
     background: blue;
 }
 
-
-
-
-
-
-
 #settingspanel {
     background: #222222;
     width: 30vw;
@@ -85,4 +79,40 @@ html {
     width: 30vw;
     height: 30vh;
     outline: 1px solid black;
+}
+
+.resolutionInput {
+    background-color: #1f1f1f;
+    width: 10vw;
+    border-radius: 5px;
+    border-color: #767676;
+    color: white;
+}
+
+/*hide number box up-down buttons Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*hide number box up-down buttons Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+button {
+    background-color: #1f1f1f;
+    color: white;
+    border-radius: 5px;
+}
+
+#settingspanel * {
+    margin-top: 1vh;
+    margin-left: 1vw;
+}
+
+#exportpanel * {
+    margin-top: 1vh;
+    margin-left: 1vw;
 }

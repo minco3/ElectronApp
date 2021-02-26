@@ -1,10 +1,10 @@
-const { app, BrowserWindow } = require('electron');
-var ffmpeg = require('ffmpeg');
+const { app, BrowserWindow, remote, dialog } = require('electron');
 
 function createWindow () {
   const win = new BrowserWindow({
     backgroundColor: '#181a1b',
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: true
     }
   })
@@ -19,3 +19,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
