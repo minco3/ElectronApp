@@ -3,14 +3,24 @@ electron
         - fileopen
         - save
         - settings menu
+    - frameless window (https://www.electronjs.org/docs/api/frameless-window)
+
+videopanel
+    - icon for when there's an audio file
 
 timelinepanel
+    - waveform (check out https://github.com/katspaugh/wavesurfer.js)
     - playhead & handle
     - keybinds for play pause
     - controls
         - play pause buttons
         - volume slider
     - in/out clipping
+    - move frame
+    - per track volume change
+    - show time (currentime : finaltime)
+    - show time when dragging
+    - show time value on timeline
 
 settingspanel
     - target bitrate
@@ -29,3 +39,4 @@ late game
     - window scaling on open
     - packaging install
     - preferences & saved data per user
+    - file handler

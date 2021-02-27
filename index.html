@@ -11,19 +11,18 @@
 
     <div id='container'>
         <div id='videopanel'>
-            <video id='preview'></video>
+            <video id='preview' ontimeupdate="videoHandler(this)"></video>
         </div>
         <div id='settingspanel'>                
-            <button onclick="openDialog()">Open File</button>
+            <button id="openDialog" onclick="openDialog()">Open File</button>
+            <button id="clearMedia" onclick="clearMedia()">Clear Media</button>
             <p id='openFilePathLabel'></p>
             <br>
-            <button onclick="clearMedia()">Clear Media</button>
-            <br><br>
+            <!-- <br><br>
             <input type='number' id='resolutionX' class='resolutionInput'>
             <input type='number' id='resolutionY' class='resolutionInput'>
             <br>
-            <input type='checkbox' checked='true' id='lockResolution'> Lock aspect ratio</label>
-            <br><br>
+            <input type='checkbox' checked='true' id='lockResolution'> Lock aspect ratio</label> -->
             <p id='currentFileSizeLabel'></p>
             <label>Target file size:</label>
             <select name="sizeTarget" class="dropDown">
@@ -46,6 +45,10 @@
 
         </div>
         <div id='timelinepanel'>
+            <div class='playHeadContainer'>
+                <input id='playHeadHandle' type="range" min=".01" step='.001' max="1" value="0" class="slider" id="myRange" oninput='updateSliderPos()'>
+                <input id='playHeadBar' disabled='true' type="range" min=".01" step='.001' max="1" value="0" class="slider" id="myRange">
+            </div>
             <div id='timeline'>
         </div>
         </div>
