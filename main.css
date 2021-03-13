@@ -7,6 +7,20 @@ html {
     color: #cecac3; 
 }
 
+.dropzone {
+    box-sizing: border-box;
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+
+    background: rgba(0,0,255,.8);
+    border: 11px dashed blue;
+}
+
 #container {
     width: 100vw;
     height: 100vh;
@@ -15,12 +29,15 @@ html {
 }
 
 #videopanel {
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
     background: #2c2c2c;
     width: 70vw;
     height: 70vh;
     align-items: center;
     justify-content: center;
     display: flex;
+    transition: background .5s;
 }
 
 #preview {
@@ -30,24 +47,37 @@ html {
 }
 
 #timelinepanel {
+    display: flex;
+    flex-wrap: wrap;
     background: #2e2e2e;
     width: 70vw;
     height: 30vh;
     outline: 1px solid black;
 }
 
-#timeline {
+#timelinecontainer {
+    height: 80%;
+    width: 100%;
+    margin-right: 5%;
+    position: relative;
     display: flex;
-    flex-flow:wrap;
+    flex-wrap: wrap;
+    background: #181818;
+}
+
+#timelinebarcontainer {
+    display: flex;
+    flex-flow: wrap;
     justify-content: center;
     align-content: center;
-    height: 30vh;
+    height: 80%;
+    width: 80%;
+    background: #1f1f1f;
 }
 
 .timelinebar {
-    margin-left: 3vw;
     bottom: 2vh;
-    width: 59vw;
+    width: 100%;
     height: 3vh;
     margin-bottom: 10px;
     margin-top: 10px;
@@ -119,14 +149,36 @@ button {
     margin-left: 1vw;
 }
 
+#playbackcontrols {
+    width: 100%;
+    height: 20%;
+}
 
 .playHeadContainer {
-    position: absolute;
-    width: 59vw;
-    margin-top: 2vh;
-    margin-left: 7vw;
-    bottom: 2vh;
+    display: flex;
+    width: 100%;
+    height: 20%;
+    /* margin-left: 20%; */
     /* margin-right: 2vw; */
+    background: #1f1f1f;
+}
+
+#timestampContainer {
+    align-items: center;
+    text-align: center;
+    background: #181818;
+    width: 20%;
+    height: 100%;
+}
+
+#timestampContainer p {
+    font-size: 1.4vw;
+    display: inline;
+}
+
+#playHeadHandleContainer {
+    width: 80%;
+    height: 100%
 }
 
 /* The slider itself */
@@ -134,7 +186,8 @@ button {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
     width: 100%;
-    height: 2vh;
+    /* margin-left: 20%; */
+    height: 100%;
     background: none;
     outline: 0;
 }
@@ -144,26 +197,52 @@ button {
     -webkit-appearance: none;
     appearance: none;
     width: 5px;
-    height: 3vh;
+    height: 15px;
     background: white;
     cursor: pointer;
 }
 
 /* The slider itself */
-#playHeadBar {
-    -webkit-appearance: none;  /* Override default CSS styles */
+/*#playHeadBar {
+    -webkit-appearance: none;   Override default CSS styles 
     appearance: none;
     width: 100%;
-    height: 23vh;
+    height: 100%;
     background: none;
-} 
+    position: absolute;
+}*/
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-#playHeadBar::-webkit-slider-thumb {
+/*#playHeadBar::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 2px;
-    height: 23vh;
+    height: 100%;
     background: black;
     cursor: default;
+    position: absolute;
+}*/
+
+#playbackcontrols {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#inOutControls {
+    padding-right: 5vw;
+}
+
+#videoControls {
+    padding-right: 5vw;
+}
+
+#masterVolumeSlider {
+    width: 9vw;
+}
+
+#trackcontrols {
+    background: #181818;
+    width: 20%;
+    height: 80%;
 }

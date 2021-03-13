@@ -6,6 +6,10 @@ var openOptions = 'defaultPath : "C:/Users/marco/Desktop/Electron/Outputs"';
 var openPath;
 var savePath;
 var b;
+var storeMasterVolume;
+var masterVolumeMuted = false;
+var videoSpeed = 1;
+var lastTarget;
 
 function openDialog() {
     remote.dialog.showOpenDialog(openOptions).then(
@@ -25,21 +29,65 @@ function videoHandler(event) {
     //console.log("percentDuration", percentDuration);
         
     //apply the percent as decimal to timeline bar (and the timeline stick)
-    playHeadBar = document.getElementById('playHeadBar');
+    //playHeadBar = document.getElementById('playHeadBar');
     playHeadHandle = document.getElementById('playHeadHandle');
 
     playHeadHandle.value = percentDuration;
-    playHeadBar.value = playHeadHandle.value;
+    //playHeadBar.value = playHeadHandle.value;
 
+    timestampHandler(video.currentTime, video.duration);
 }
+
+function playPause(state = 'toggle') {
+    video = document.getElementById('preview');
+    document.getElementById('playButton');
+    
+    switch(state) {
+        case 'play':
+            if(!video.paused) {
+                videoSpeed = videoSpeed + 0.5;
+            }
+            video.playbackRate = videoSpeed;
+            video.play();
+            document.getElementById('playButton').innerText = '⏸️';
+            break;
+        case 'pause':
+            video.pause();
+            videoSpeed = 1;
+            document.getElementById('playButton').innerText = '▶️';
+            break;
+        case 'toggle':
+            if(video.paused) {
+                video.playbackRate = videoSpeed;
+                video.play();
+                document.getElementById('playButton').innerText = '⏸️';
+            }
+            else {
+                video.pause();
+                videoSpeed = 1;
+                document.getElementById('playButton').innerText = '▶️';
+            }
+            break;
+    }
+}
+
+function gotoStart() {
+    video = document.getElementById('preview');
+    video.currentTime = 0;
+}
+
+function gotoEnd() {
+    video = document.getElementById('preview');
+    video.currentTime = video.duration;
+}
+
 
 document.addEventListener('keydown', (event => {
     //console.log('key ', event.key, ' pressed');
     video = document.getElementById('preview');
     switch(event.key) {
         case ' ':
-            if(video.paused) { video.play() }
-            else { video.pause() }
+            playPause();
             event.preventDefault();
             event.stopPropagation();
             break;
@@ -89,10 +137,22 @@ document.addEventListener('keydown', (event => {
             event.preventDefault();
             event.stopPropagation();
             break;
+        
+        case 'l':
+            playPause('play');
+            break;
+        
+        case 'k':
+            playPause('pause');
+            break;
     }
 }));
 
-document.addEventListener('drop', (event => { 
+
+document.addEventListener('drop', (event => {
+    //console.log(lastTarget);
+    dragDetector.style.visibility = "hidden";
+    dragDetector.style.opacity = 0;
     event.preventDefault(); 
     event.stopPropagation(); 
   
@@ -102,19 +162,25 @@ document.addEventListener('drop', (event => {
     openPath = f.path;
     runUpload();
 
-})); 
-  
-document.addEventListener('dragover', (e) => { 
-    e.preventDefault(); 
-    e.stopPropagation(); 
+}));
+
+document.addEventListener('dragenter', (e) => {
+    // console.log('File is in the Drop Space');
+    console.log('enter',lastTarget);
+    lastTarget = e.target;
+    dragDetector = document.getElementById('dragDetector');
+    dragDetector.style.visibility = "";
+    dragDetector.style.opacity = 1;
 }); 
   
-document.addEventListener('dragenter', (event) => { 
-    console.log('File is in the Drop Space'); 
-}); 
-  
-document.addEventListener('dragleave', (event) => { 
-    console.log('File has left the Drop Space'); 
+document.addEventListener('dragleave', (e) => { 
+    // console.log('File has left the Drop Space');
+    console.log('exit',lastTarget);
+    dragDetector = document.getElementById('dragDetector');
+    if(e.target === lastTarget || e.target === document) {
+        dragDetector.style.visibility = "hidden";
+        dragDetector.style.opacity = 0;
+    }
 });
 
 function runFFProbe(filepath) {
@@ -129,10 +195,9 @@ function runFFProbe(filepath) {
 
 function updateHTML() {
     const preview = document.getElementById('preview');
-    const timelineContainer = document.getElementById('timeline');
+    const timelineBarContainer = document.getElementById('timelinebarcontainer');
 
-    removeAllChildNodes(preview);
-    removeAllChildNodes(timelineContainer);
+    clearMedia();
 
     document.getElementById('openFilePathLabel').innerText = "Opened file path: " + openPath;
 
@@ -158,7 +223,7 @@ function updateHTML() {
         var timelineBarName = 'timelinebar' + String(i);
         var timelineBar = document.createElement('div');
         timelineBar.setAttribute('id', timelineBarName); 
-        timelineContainer.appendChild(timelineBar);
+        timelineBarContainer.appendChild(timelineBar);
 
         if (b.streams[i].codec_type == 'video') {
             document.getElementById(timelineBarName).setAttribute('class', 'timelinebar video');
@@ -175,7 +240,6 @@ function updateHTML() {
 }
 
 async function runUpload() {
-
     clearMedia();
     await runFFProbe(openPath);
     updateHTML();
@@ -200,7 +264,7 @@ function clearMedia() {
     videoPanel = document.getElementById('preview')
     removeAllChildNodes(videoPanel);
     videoPanel.load();
-    removeAllChildNodes(document.getElementById('timeline'));
+    removeAllChildNodes(document.getElementById('timelinebarcontainer'));
     // document.getElementById('resolutionX').value = '';
     // document.getElementById('resolutionY').value = '';
     // document.getElementById('lockResolution').checked = 'true';
@@ -262,12 +326,61 @@ function runFFmpeg() {
 
 function updateSliderPos() {
     //move the timeline bar to match the position of the handle
-	playHeadBar = document.getElementById('playHeadBar');
+	//playHeadBar = document.getElementById('playHeadBar');
 	playHeadHandle = document.getElementById('playHeadHandle');
-    playHeadBar.value = playHeadHandle.value;
+    // playHeadBar.value = playHeadHandle.value;
     
     //seek the track of the video to match the position of the bar
     video = document.getElementById('preview');
     //console.log('percentage of video set', playHeadHandle.value);
     video.currentTime = playHeadHandle.value * video.duration;
+    timestampHandler(video.currentTime, video.duration);
+}
+
+function updateMasterVolume() {
+    masterVolumeMuted = false;
+
+    video = document.getElementById('preview');
+    masterVolumeSlider = document.getElementById('masterVolumeSlider');
+    video.volume = masterVolumeSlider.value;
+
+    masterVolumeIndicator = document.getElementById('masterVolumeIndicator');
+    if(masterVolumeSlider.value <= .5) {
+        masterVolumeIndicator.className = 'fa fa-volume-down';
+    } else if(masterVolumeSlider.value > .5) {
+        masterVolumeIndicator.className = 'fa fa-volume-up';
+    }
+    if(masterVolumeSlider.value < .03) {
+        masterVolumeIndicator.className = 'fa fa-volume-off';
+    }
+}
+
+function masterVolumeToggle() {
+    video = document.getElementById('preview');
+    masterVolumeSlider = document.getElementById('masterVolumeSlider');
+    masterVolumeIndicator = document.getElementById('masterVolumeIndicator');
+
+    if(masterVolumeMuted) {
+        masterVolumeIndicator.className = 'fa fa-volume-up';
+        masterVolumeSlider.value = storeMasterVolume;
+        updateMasterVolume();
+        masterVolumeMuted = false;
+
+    } else {
+        storeMasterVolume = masterVolumeSlider.value;
+        masterVolumeIndicator.className = 'fa fa-volume-off';
+        masterVolumeSlider.value = 0;
+        video.volume = 0;
+        masterVolumeMuted = true;
+    }
+}
+
+function timestampHandler(currentTime, duration) {
+    remainingTime = duration - currentTime;
+
+    readableCurrentTime = new Date(currentTime * 1000).toISOString().substr(11, 8);
+    readableRemainingTime = new Date(remainingTime * 1000).toISOString().substr(11, 8);
+
+    document.getElementById('timestampCurrent').innerText = readableCurrentTime;
+    document.getElementById('timestampRemaining').innerText = readableRemainingTime;
 }
