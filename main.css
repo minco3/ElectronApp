@@ -7,7 +7,7 @@ html {
     color: #cecac3; 
 }
 
-.dropzone {
+#dropzone {
     box-sizing: border-box;
     display: none;
     position: fixed;
@@ -17,8 +17,8 @@ html {
     top: 0;
     z-index: 99999;
 
-    background: rgba(0,0,255,.8);
-    border: 11px dashed blue;
+    background: rgba(0,0,0,.8);
+    /* border: 11px dashed black; */
 }
 
 #container {
@@ -226,15 +226,23 @@ button {
 #playbackcontrols {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
-#inOutControls {
-    padding-right: 5vw;
+/* #inOutControls {
+    align-self: center;
+} */
+
+/* #videoControls {
+    
+} */
+
+#masterVolumeSliderContainer {
+    display: flex;
 }
 
-#videoControls {
-    padding-right: 5vw;
+#masterVolumeIndicatorContainer {
+    width: 15px;
 }
 
 #masterVolumeSlider {

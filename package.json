@@ -13,6 +13,7 @@
     "electron": "^11.2.3"
   },
   "dependencies": {
+    "electron-progressbar": "^2.0.0",
     "ffmpeg": "0.0.4",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.0.0",

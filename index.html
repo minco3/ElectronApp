@@ -26,20 +26,20 @@
             <input type='checkbox' checked='true' id='lockResolution'> Lock aspect ratio</label> -->
             <p id='currentFileSizeLabel'></p>
             <label>Target file size:</label>
-            <select name="sizeTarget" class="dropDown">
+            <select name="sizeTarget" id="sizeTarget" class="dropDown">
                 <option value="native">Same as source</option>
                 <option value="8">8 MB</option>
                 <option value="50">50 MB</option>
                 <option value="100">100 MB</option>
             </select>
-            <br>
+            <!-- <br>
             <label>Audio preset</label>
             <select id="audioPreset" class="dropDown">
                 <option value="native">Same as source</option>
                 <option value="32">Lossy</option>
                 <option value="64">Average</option>
                 <option value="128">Good</option>
-            </select>
+            </select> -->
             <br>
             <button onclick="setAudioPresets()">Set audio presets</button>
         </div>
@@ -61,7 +61,9 @@
 
                 <div id='masterVolumeSliderContainer'>
                     <input id='masterVolumeSlider' type="range" min=".01" step='.001' max="1" value="1" class="slider" oninput='updateMasterVolume()'>
-                    <i id='masterVolumeIndicator' class="fa fa-volume-up" onclick='masterVolumeToggle()'></i>
+                    <div id='masterVolumeIndicatorContainer'>
+                        <i id='masterVolumeIndicator' class="fa fa-volume-up" onclick='masterVolumeToggle()'></i>
+                    </div>
                 </div>
             </div>
             <div id='timelinecontainer'>
@@ -84,6 +86,8 @@
             <button onclick="saveDialog()">Save As</button>
             <br>
             <button onclick="runFFmpeg()">Export</button>
+            <br>
+            <button onclick="pBarTest()">increase progress</button>
         </div>
     </div>
 </body>

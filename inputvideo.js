@@ -1,6 +1,11 @@
 //var ffprobe = require('ffprobe'), ffprobeStatic = require('ffprobe-static');
 const ffmpeg = require('fluent-ffmpeg');
 const { remote, nativeImage, ipcRenderer } = require('electron');
+//const { remote, app, BrowserWindow } = electron.remote;
+
+// const electron = require('electron');
+
+
 var saveOptions = 'defaultPath : "C:/Users/marco/Desktop/Electron/Outputs"';
 var openOptions = 'defaultPath : "C:/Users/marco/Desktop/Electron/Outputs"';
 var openPath;
@@ -9,7 +14,84 @@ var b;
 var storeMasterVolume;
 var masterVolumeMuted = false;
 var videoSpeed = 1;
-var lastTarget;
+var dropZone;
+
+
+// var progressBar = new ProgressBar({
+//     abortOnError: false,
+//     indeterminate: false,
+//     initialValue: 0,
+//     maxValue: 100,
+//     closeOnComplete: false,
+//     title: 'Title of the Progress Bar',
+//     text: 'Text of the Progress Bar',
+//     detail: 'Detail to Show actual Progress, ' + 
+//             'Can be set as Dynamic to show actual Status',
+//     style: {
+//         text: {},
+//         detail: {},
+//         bar: { 'width': '100%', 'background-color': '#BBE0F1' },
+//         value: {}
+//     },
+//     // browserWindow: {
+//     //     parent: null,
+//     //     modal: true,
+//     //     resizable: false,
+//     //     closable: false,
+//     //     minimizable: false,
+//     //     maximizable: false,
+//     //     width: 500,
+//     //     height: 170,
+//     //     // Important - If not passed, Progress Bar will not be displayed. 
+//     //     webPreferences: {
+//     //         nodeIntegration: true
+//     //     }
+//     // }
+// });
+
+
+window.onload = function() {
+    dropZone = document.getElementById('dropzone');
+    
+    window.addEventListener('dragenter', function(e) {
+        showDropZone();
+    });
+
+    dropZone.addEventListener('dragenter', allowDrag);
+    dropZone.addEventListener('dragover', allowDrag);
+    dropZone.addEventListener('dragleave', function(e) {
+        hideDropZone();
+    });
+
+    dropZone.addEventListener('drop', handleDrop);
+
+}
+
+function showDropZone() {
+    dropZone.style.display = "block";
+}
+function hideDropZone() {
+    dropZone.style.display = "none";
+}
+function allowDrag(e) {
+    if (true) {  // Test that the item being dragged is a valid one
+        e.dataTransfer.dropEffect = 'copy';
+        e.preventDefault();
+    }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    hideDropZone();
+
+    //for (const f of event.dataTransfer.files) { }
+    f = e.dataTransfer.files[0];
+    console.log('File Path of dragged file: ', f.path);
+    openPath = f.path;
+    runUpload();
+}
+
+
 
 function openDialog() {
     remote.dialog.showOpenDialog(openOptions).then(
@@ -149,39 +231,34 @@ document.addEventListener('keydown', (event => {
 }));
 
 
-document.addEventListener('drop', (event => {
-    //console.log(lastTarget);
-    dragDetector.style.visibility = "hidden";
-    dragDetector.style.opacity = 0;
-    event.preventDefault(); 
-    event.stopPropagation(); 
+// document.addEventListener('drop', (event => {
+//     console.log(lastTarget);
+//     event.preventDefault(); 
+//     event.stopPropagation(); 
   
-    //for (const f of event.dataTransfer.files) { }
-    f = event.dataTransfer.files[0];
-    console.log('File Path of dragged file: ', f.path);
-    openPath = f.path;
-    runUpload();
+//     //for (const f of event.dataTransfer.files) { }
+//     f = event.dataTransfer.files[0];
+//     console.log('File Path of dragged file: ', f.path);
+//     openPath = f.path;
+//     runUpload();
 
-}));
+// }));
 
-document.addEventListener('dragenter', (e) => {
-    // console.log('File is in the Drop Space');
-    console.log('enter',lastTarget);
-    lastTarget = e.target;
-    dragDetector = document.getElementById('dragDetector');
-    dragDetector.style.visibility = "";
-    dragDetector.style.opacity = 1;
-}); 
+// document.addEventListener('dragenter', (e) => {
+//     // console.log('File is in the Drop Space');
+//     console.log('enter',lastTarget);
+//     lastTarget = e.target;
+// }); 
   
-document.addEventListener('dragleave', (e) => { 
-    // console.log('File has left the Drop Space');
-    console.log('exit',lastTarget);
-    dragDetector = document.getElementById('dragDetector');
-    if(e.target === lastTarget || e.target === document) {
-        dragDetector.style.visibility = "hidden";
-        dragDetector.style.opacity = 0;
-    }
-});
+// document.addEventListener('dragleave', (e) => { 
+//     // console.log('File has left the Drop Space');
+//     console.log('exit',lastTarget);
+//     dragDetector = document.getElementById('dragDetector');
+//     if(e.target === lastTarget || e.target === document) {
+//         dragDetector.style.visibility = "hidden";
+//         dragDetector.style.opacity = 0;
+//     }
+// });
 
 function runFFProbe(filepath) {
     return new Promise(resolve => {
@@ -218,7 +295,7 @@ function updateHTML() {
     // document.getElementById('resolutionY').value = resY;
 
 
-    for (var i = 0; i < b.streams.length;) {
+    for (var i = 0; i < b.streams.length; i++) {
         var timelineBars = document.getElementsByClassName('timelinebar');
         var timelineBarName = 'timelinebar' + String(i);
         var timelineBar = document.createElement('div');
@@ -235,7 +312,6 @@ function updateHTML() {
         } else if (b.streams[i].codec_type == 'audio') {
             document.getElementById(timelineBarName).setAttribute('class', 'timelinebar audio'); 
         } 
-        i++;
     }
 }
 
@@ -243,7 +319,6 @@ async function runUpload() {
     clearMedia();
     await runFFProbe(openPath);
     updateHTML();
-
 }    
 
 function removeAllChildNodes(parent) {
@@ -261,7 +336,7 @@ function saveDialog() {
 }
 
 function clearMedia() {
-    videoPanel = document.getElementById('preview')
+    videoPanel = document.getElementById('preview');
     removeAllChildNodes(videoPanel);
     videoPanel.load();
     removeAllChildNodes(document.getElementById('timelinebarcontainer'));
@@ -271,54 +346,90 @@ function clearMedia() {
     document.getElementById('openFilePathLabel').innerText = '';
     document.getElementById('currentFileSizeLabel').innerText = "";
 }
+function audioSize() {
+    audioTrackSize = 0;
+    
+    for (var i = 1; i < (b.streams.length); i++) {
+        currentStreamSize = Math.ceil(b.streams[i].duration * b.streams[i].bit_rate);
+        audioTrackSize = audioTrackSize + currentStreamSize;
+        console.log('addding', currentStreamSize, 'to the file');
+    }
+    audioTrackSizeMB = (audioTrackSize / 8388608);
+    console.log('audio tracks are', audioTrackSizeMB, 'MB large');
+    return(audioTrackSizeMB);
+}
 
 function calculateBitrate(target) {
-    var nativeBitrate = b.streams[0].bitrate;
+    var nativeBitrate = b.streams[0].bit_rate;
 
-    if( target == 'native') {
+    if( target === 'native') {
         targetBitrate = nativeBitrate;
         console.log('using native bitrate, file will likely be larger');
     }
     else {
-        targetBitrate = (parseInt(target) / parseFloat(b.format.duration)) * 10000;   
+        targetBitrate = Math.ceil((((parseInt(target) - audioSize()) / parseFloat(b.format.duration)) * 8192))
     }
     
-    console.log('targetBitrate: ' + targetBitrate);
-    return(targetBitrate);
+    console.log('targetBitrate:', targetBitrate.toString());
+    return(targetBitrate.toString());
 }
 
 function setVideoPresets() {
+    video = document.getElementById('preview');
     bitrate = calculateBitrate(document.getElementById('sizeTarget').value);
     
+    //fps = video.fps;
+    fps = 0;
+
+    res = '1920x1080';
     
-    return({fps,res,bitrate});
+    returnList = [res,bitrate,fps];
+
+    return(returnList);
 }
 
-function setAudioPresets() {
-    var nativeBitrate = b.streams[1].audioBitrate;
-    bitrateDropdown = document.getElementById('audioPreset').value;
+// function setAudioPresets() {
+//     var nativeBitrate = b.streams[1].audioBitrate;
+//     bitrateDropdown = document.getElementById('audioPreset').value;
 
-    if( bitrateDropdown == 'native') { bitrate = nativeBitrate }
-    else {  bitrate = bitrateDropdown  }
+//     if( bitrateDropdown == 'native') { bitrate = nativeBitrate }
+//     else {  bitrate = bitrateDropdown  }
 
-    if(bitrate > nativeBitrate) {bitrate = nativeBitrate}    
+//     if(bitrate > nativeBitrate) {bitrate = nativeBitrate}    
 
-    return(bitrate);
-}
+//     return(bitrate);
+// }
 
 function runFFmpeg() {
     videoSettings = setVideoPresets();
-    audioSettings = setAudioPresets();
+    res = videoSettings[0];
+    bitrate = videoSettings[1];
+    //fps = videoSettings[2];
+
+    console.log('exporting video at', res, 'with bitrate of', bitrate);
+
+    // audioSettings = setAudioPresets();
+
+
+
+    ipcRenderer.send('create-new-progressbar', 'OVER TO YOU');
 
     ffmpeg({ source: openPath })
+    //.noAudio()
     //.noVideo()
-    .videoBitrate(targetBitrate)
-    // .size()
-    .fps(fps)
-    .audioBitrate(audioSettings)
+    //.size(res)
+    .videoBitrate(bitrate)
+    //.fps(fps)
+    //.audioBitrate(audioSettings)
     .output(savePath)
+    .on('progress', function(progress) {
+        console.log('processing: ' + Math.floor(progress.percent) + '% done');
+        ipcRenderer.send('send-new-progress-value', progress.percent);
+    })
     .on('end', function() {
         console.log('Finished processing');
+        alert('Export finished.');
+        ipcRenderer.send('send-new-progress-value', 'FINISHED');
     }) 
     .run();
 }
